@@ -24,8 +24,8 @@ variable "location_name" {
   default     = "us-central1"
 
 }
-variable "credentials" {
-  description = "the credentials"
-  type        = string
+# variable "credentials" {
+#   description = "the credentials"
+#   type        = string
 
-}
+# }
