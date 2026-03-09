@@ -7,26 +7,23 @@ jobs:
     terraform-jobs:
         runs-on: ubuntu-latest
         container:
-            image: hashicorp/terraform:1.7.0 # this is the image of container
-            #in this seccion we pass de gcp credentiales
+            image: hashicorp/terraform:1.7.0
             env:
-                TF_VAR_credentials: ${{ secrets.GCP_SA_TERRAFORM }}
+                # Usamos la ruta absoluta estándar de GitHub Actions dentro de contenedores
                 GCP_JSON_KEY: ${{ secrets.GCP_SA_TERRAFORM }}
-              # Esta es la variable que Terraform busca automáticamente para el BACKEND
                 GOOGLE_APPLICATION_CREDENTIALS: /github/workspace/gcp-key.json
-             
         
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-             # PASO CLAVE: Convertir el texto del secreto en un archivo físico
+
+            # PASO CORREGIDO: Usamos la ruta absoluta para asegurar que el archivo esté donde dice la variable
             - name: Create Credentials File
-              run: echo "$GCP_JSON_KEY" > gcp-key.json
-        # we don't need setup terraform cos terraform is already installed
+              run: echo "$GCP_JSON_KEY" > /github/workspace/gcp-key.json
+
             - name: Check Version
-              run:  terraform --version
-            #IMPORTANT: for real deploying, we don't use -backend=false
-            # the container will use the env credentaials to connect to the GCP bucket
+              run: terraform --version
+
             - name: Terraform init
               run: terraform init 
 
@@ -37,14 +34,12 @@ jobs:
                 region_name     = "us-central1"
                 bucket_name     = "git_hub_test_container"
                 location_name   = "us-central1"
-                 EOF
+                EOF
 
             - name: Terraform Plan
               run: terraform plan -out=tfplan -input=false
 
             - name: Terraform apply
               if: github.ref == 'refs/heads/master'
-              run: terraform apply -auto-approve ftplan
-
-
-        
+              # CORREGIDO: Cambiado 'ftplan' por 'tfplan'
+              run: terraform apply -auto-approve tfplan
