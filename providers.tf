@@ -17,9 +17,9 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket      = "gactions-gcp-lab"
-    prefix      = "terraform/state"
-    credentials = "../opensip-prod-7e56dd74c247.json"
+    bucket = "gactions-gcp-lab"
+    prefix = "terraform/state"
+    # credentials = "../opensip-prod-7e56dd74c247.json"
 
   }
 }
