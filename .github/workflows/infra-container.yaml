@@ -1,7 +1,15 @@
 name: Infra Container
 run-name: "${{ github.actor }}"
 
-on: [ push ]
+on: 
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'write "destroy" to delete all resources'
+        required: false
+        default: 'apply'
 
 jobs:
     terraform-jobs:
@@ -38,8 +46,19 @@ jobs:
                 EOF
 
             - name: Terraform Plan
-              run: terraform plan -out=tfplan -input=false
+              id: plan
+              run: |
+                ACTION=$(echo "${{ github.event.inputs.action }}" | xargs | tr '[:upper:]' '[:lower:]')
+                if [ "$ACTION" == "destroy" ]; then
+                  echo "build destroy plan"
+                  terraform plan -destroy -out=tfplan -input=false
+                else
+                  echo "build deployment plant"
+                  terraform plan -out=tfplan -input=false
+                fi
 
             - name: Terraform apply
               if: github.ref == 'refs/heads/master'
               run: terraform apply -auto-approve tfplan
+            
+          
