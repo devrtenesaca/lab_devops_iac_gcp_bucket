@@ -24,3 +24,4 @@ variable "location_name" {
   default     = "us-central1"
 
 }
+

@@ -8,9 +8,10 @@ terraform {
 }
 
 provider "google" {
-  project     = var.project_name
-  region      = var.region_name
-  credentials = file("../opensip-prod-7e56dd74c247.json")
+  project = var.project_name
+  region  = var.region_name
+  #credentials = file("../opensip-prod-7e56dd74c247.json")
+  credentials = var.gcp_credentials
 
 }
 

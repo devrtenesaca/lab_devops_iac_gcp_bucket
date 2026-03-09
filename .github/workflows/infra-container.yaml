@@ -8,6 +8,9 @@ jobs:
         runs-on: ubuntu-latest
         container:
             image: hashicorp/terraform:1.7.0 # this is the image of container
+            #in this seccion we pass de gcp credentiales
+            env:
+                TF_VAR_gcp_credentiales: ${{ secrets.GCP_SA_TERRAFORM }}
         
         steps:
             - name: Checkout
@@ -15,9 +18,26 @@ jobs:
         # we don't need setup terraform cos terraform is already installed
             - name: Check Version
               run:  terraform --version
-
+            #IMPORTANT: for real deploying, we don't use -backend=false
+            # the container will use the env credentaials to connect to the GCP bucket
             - name: Terraform init
-              run: terraform init -backend=false
+              run: terraform init 
+
+            - name: Create tfvars
+              run: |
+                cat <<EOF > terraform.tfvars
+                project_name    = "opensip-prod"
+                region_name     = "us-central1"
+                bucket_name     = "git_hub_test_container"
+                location_name   = "us-central1"
+                 EOF
+
+            - name: Terraform Plan
+              run: terraform plan -out=tfplan -input=false
+
+            - name: Terraform apply
+              if: github.ref == 'refs/heads/master'
+              run: terraform apply -auto-approve ftplan
 
 
         
