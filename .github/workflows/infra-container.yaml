@@ -1,0 +1,4 @@
+name: Infra Container
+run-name: "${{ github.actor }}- ${{ github.events.input.action }}"
+
+on: [ push ]
