@@ -11,10 +11,17 @@ jobs:
             #in this seccion we pass de gcp credentiales
             env:
                 TF_VAR_credentials: ${{ secrets.GCP_SA_TERRAFORM }}
+                GCP_JSON_KEY: ${{ secrets.GCP_SA_TERRAFORM }}
+              # Esta es la variable que Terraform busca automáticamente para el BACKEND
+                GOOGLE_APPLICATION_CREDENTIALS: /github/workspace/gcp-key.json
+             
         
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+             # PASO CLAVE: Convertir el texto del secreto en un archivo físico
+            - name: Create Credentials File
+              run: echo "$GCP_JSON_KEY" > gcp-key.json
         # we don't need setup terraform cos terraform is already installed
             - name: Check Version
               run:  terraform --version
