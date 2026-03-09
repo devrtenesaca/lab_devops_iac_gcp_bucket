@@ -10,16 +10,17 @@ jobs:
             image: hashicorp/terraform:1.7.0
             env:
                 GCP_JSON_KEY: ${{ secrets.GCP_SA_TERRAFORM }}
-                # Usamos el contexto de GitHub para obtener la ruta dinámica
-                GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+                # 1. Usamos una ruta relativa simple. Terraform la entenderá perfecto.
+                GOOGLE_APPLICATION_CREDENTIALS: ./gcp-key.json
         
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
-            # Usamos la misma variable de contexto aquí para crear el archivo
+            # 2. CREACIÓN DEL ARCHIVO: Usamos el nombre directo sin rutas largas.
+            # El archivo se creará justo donde está tu código.
             - name: Create Credentials File
-              run: echo "$GCP_JSON_KEY" > ${{ github.workspace }}/gcp-key.json
+              run: echo "$GCP_JSON_KEY" > gcp-key.json
 
             - name: Check Version
               run: terraform --version
