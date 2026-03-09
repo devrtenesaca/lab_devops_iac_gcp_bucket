@@ -9,17 +9,17 @@ jobs:
         container:
             image: hashicorp/terraform:1.7.0
             env:
-                # Usamos la ruta absoluta estándar de GitHub Actions dentro de contenedores
                 GCP_JSON_KEY: ${{ secrets.GCP_SA_TERRAFORM }}
-                GOOGLE_APPLICATION_CREDENTIALS: /github/workspace/gcp-key.json
+                # Usamos el contexto de GitHub para obtener la ruta dinámica
+                GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
-            # PASO CORREGIDO: Usamos la ruta absoluta para asegurar que el archivo esté donde dice la variable
+            # Usamos la misma variable de contexto aquí para crear el archivo
             - name: Create Credentials File
-              run: echo "$GCP_JSON_KEY" > /github/workspace/gcp-key.json
+              run: echo "$GCP_JSON_KEY" > ${{ github.workspace }}/gcp-key.json
 
             - name: Check Version
               run: terraform --version
@@ -41,5 +41,4 @@ jobs:
 
             - name: Terraform apply
               if: github.ref == 'refs/heads/master'
-              # CORREGIDO: Cambiado 'ftplan' por 'tfplan'
               run: terraform apply -auto-approve tfplan
