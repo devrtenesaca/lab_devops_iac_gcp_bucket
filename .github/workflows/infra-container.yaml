@@ -10,7 +10,7 @@ jobs:
             image: hashicorp/terraform:1.7.0 # this is the image of container
             #in this seccion we pass de gcp credentiales
             env:
-                TF_VAR_gcp_credentiales: ${{ secrets.GCP_SA_TERRAFORM }}
+                TF_VAR_credentials: ${{ secrets.GCP_SA_TERRAFORM }}
         
         steps:
             - name: Checkout
