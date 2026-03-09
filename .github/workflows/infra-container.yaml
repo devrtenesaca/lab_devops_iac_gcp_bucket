@@ -1,5 +1,5 @@
 name: Infra Container
-run-name: "${{ github.actor }}- ${{ github.events.input.action }}"
+run-name: "${{ github.actor }}"
 
 on: [ push ]
 
@@ -7,7 +7,7 @@ jobs:
     terraform-jobs:
         runs-on: ubuntu-latest
         container:
-            image: hashicorp/terraform:1.7.0. # this is the image of container
+            image: hashicorp/terraform:1.7.0 # this is the image of container
         
         steps:
             - name: Checkout
