@@ -11,6 +11,11 @@ on:
         required: false
         default: 'apply'
 
+#concurrency checkout
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
     terraform-jobs:
         runs-on: ubuntu-latest
